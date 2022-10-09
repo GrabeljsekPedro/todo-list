@@ -45,6 +45,16 @@
     font-size: 1rem;
   }
 
+  .todo-tag-input {
+    width: 250px;
+    padding: 5px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    margin-top: 7.5px;
+    font-size: 0.7rem;
+  }
+
   .add-button {
     background-color: #0000ff;
     color: #fff;

@@ -24,8 +24,8 @@ addEventListener('DOMContentLoaded', (e) => {
 /* Listens to the pressing of the "Add" button and runs 
 the addTodo function */
 todoForm.addEventListener('submit', function (e) {
-  e.preventDefault();
-  addTodo(todoInput.value);
+ e.preventDefault();
+  addTodo(todoInput.value,todoTag.value);
 })
 
 /* Listens to the pressing of the "Clear All" button and runs 
@@ -39,7 +39,7 @@ clearAllButton.addEventListener('click', () => {
 /* addTodo checks that the input is not empty, pushes the input in
 an array saves the array into the local storage, updates the counter
 and inserts said array in the DOM */
-function addTodo(todo) {
+function addTodo(todo,todotag) {
   if (!todo) {
     alert('Please fill out the box');
     return;
@@ -47,7 +47,7 @@ function addTodo(todo) {
   todos.push(todo);
   saveTodosToLocalStorage(todos);
   counterUpdate();
-  insertToListOnDom(todo);
+  insertToListOnDom(todo,todotag);
 }
 
 /* Saves the array to the local storage by converting it into a string */
@@ -57,17 +57,22 @@ function saveTodosToLocalStorage(todos) {
 
 /* This function inserts the inputs and buttons on the DOM,
 also it saves it to the local storage */
-function insertToListOnDom(todo) {
-
-  /* Creates the input */
+function insertToListOnDom(todo,todotag) {
   const todo_li = document.createElement('li');
   todo_li.classList.add('item');
   todoItemsList.appendChild(todo_li);
+
+  /* Creates the input */
   const todo_input_li = document.createElement('input');
   todo_input_li.classList.add('text');
   todo_input_li.type = 'text';
   todo_input_li.value = todo;
   todo_input_li.setAttribute('disabled', '');
+
+  /* Creates the tags */
+  const todo_tag_li = document.createElement('div');
+  todo_tag_li.classList.add('tag');
+  todo_tag_li.innerText = todotag;
 
   /* Creates the "Edit" button */
   const todo_edit_li = document.createElement('button');
@@ -96,7 +101,9 @@ function insertToListOnDom(todo) {
   todo_li.appendChild(todo_input_li);
   todo_li.appendChild(todo_edit_li);
   todo_li.appendChild(todo_delete_li);
+  todo_li.appendChild(todo_tag_li);
   todoInput.value = '';
+  todoTag.value = '';
 }
 
 /* Retrieves the todo array from the local storage, if it is empty it

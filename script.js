@@ -5,7 +5,7 @@ const todoItemsList = document.querySelector('.todo-items');
 const counter = document.querySelector('.counter');
 const clearAllButton = document.querySelector('.clear-all');
 const todoStored = localStorage.getItem('todos')
-let todos = getTodosFromLocalStorage();
+let newTodos = getTodosFromLocalStorage();
 let valueBeforeEditIndex;
 
 /* Event listeners*/
@@ -13,8 +13,8 @@ let valueBeforeEditIndex;
 /* Listens to the refreshment of the page, inserts the objects from
 the local storage and updates the counter */
 addEventListener('DOMContentLoaded', (e) => {
-  if (todos) {
-    insertMultipleToListOnDom(todos);
+  if (newTodos) {
+    insertMultipleToListOnDom(newTodos);
     counterUpdate();
   } else {
     counterUpdate();
@@ -44,8 +44,11 @@ function addTodo(todo,todotag) {
     alert('Please fill out the box');
     return;
   }
-  todos.push(todo);
-  saveTodosToLocalStorage(todos);
+  newTodos.push({
+    content: todo,
+    tags: [todotag],
+  });
+  saveTodosToLocalStorage(newTodos);
   counterUpdate();
   insertToListOnDom(todo,todotag);
 }
@@ -123,8 +126,8 @@ function getTodosFromLocalStorage() {
 
 /* Runs the function insertToListOnDom for every element on the todo array */
 function insertMultipleToListOnDom(todos) {
-  todos.forEach(todo => {
-    insertToListOnDom(todo);
+  todos.forEach((todo) => {
+    insertToListOnDom(todo.content,todo.tags);
   })
 }
 
@@ -135,16 +138,22 @@ and saves it to the local storage by checkingthe index */
 function editTodoInput(todoEdit, todoInput, todoTagInput) {
   if (todoEdit.innerText.toLowerCase() === 'edit') {
     const oldInputValue = todoInput.value;
-    valueBeforeEditIndex = todos.indexOf(oldInputValue);
+    valueBeforeEditIndex = newTodos.findIndex(object => {
+      return object.content === oldInputValue;
+    });
     todoInput.removeAttribute('disabled');
     todoTagInput.removeAttribute('disabled');
     todoInput.focus();
     todoEdit.innerText = 'Save';
   } else {
     todoInput.setAttribute('disabled', '');
+    todoTagInput.setAttribute('disabled', '');
     todoEdit.innerText = 'Edit';
-    todos.splice(valueBeforeEditIndex,1,todoInput.value);
-    saveTodosToLocalStorage(todos);
+    newTodos[valueBeforeEditIndex] = {
+      content: todoInput.value,
+      tags: [todoTagInput.value]
+    };
+    saveTodosToLocalStorage(newTodos);
   }
 }
 
@@ -152,16 +161,18 @@ function editTodoInput(todoEdit, todoInput, todoTagInput) {
 from the array by checking the index, saves it to the local storage and
 updates the counter */
 function deleteTodoInput(todoDelete,todoElement) {
-  const todoIndex = todos.indexOf(todoDelete.value)
-  todos.splice(todoIndex,1);
+  const todoIndex = newTodos.findIndex(object => {
+    return object.content === todoDelete.value;
+  });
+  newTodos.splice(todoIndex,1);
   todoItemsList.removeChild(todoElement);
-  saveTodosToLocalStorage(todos);
+  saveTodosToLocalStorage(newTodos);
   counterUpdate();
 }
 
 /* Updates the counter by checking the length of the array */
 function counterUpdate() {
-  const counterNumber = todos.length;
+  const counterNumber = newTodos.length;
   counter.innerHTML = `Number of To dos: ${counterNumber}`;
 }
 
@@ -169,7 +180,7 @@ function counterUpdate() {
 on the local storage and updates the counter */
 function clearAll() {
   todoItemsList.innerHTML="";
-  todos=[];
-  saveTodosToLocalStorage(todos);
+  newTodos=[];
+  saveTodosToLocalStorage(newTodos);
   counterUpdate();
 }

@@ -70,9 +70,13 @@ function insertToListOnDom(todo,todotag) {
   todo_input_li.setAttribute('disabled', '');
 
   /* Creates the tags */
-  const todo_tag_li = document.createElement('div');
+  const todo_tag_div = document.createElement('div');
+  const todo_tag_li = document.createElement('input');
   todo_tag_li.classList.add('tag');
-  todo_tag_li.innerText = todotag;
+  todo_tag_li.type = 'text';
+  todo_tag_li.value = todotag;
+  todo_tag_li.setAttribute('disabled', '');
+  todo_tag_div.appendChild(todo_tag_li);
 
   /* Creates the "Edit" button */
   const todo_edit_li = document.createElement('button');
@@ -82,7 +86,7 @@ function insertToListOnDom(todo,todotag) {
   /* Listens to the click of the "Edit" button and runs the 
   editTodoInput function */
   todo_edit_li.addEventListener('click', () => {
-    editTodoInput(todo_edit_li, todo_input_li);
+    editTodoInput(todo_edit_li, todo_input_li, todo_tag_li);
   });
 
   /* Creates the "Delete" button */
@@ -101,7 +105,7 @@ function insertToListOnDom(todo,todotag) {
   todo_li.appendChild(todo_input_li);
   todo_li.appendChild(todo_edit_li);
   todo_li.appendChild(todo_delete_li);
-  todo_li.appendChild(todo_tag_li);
+  todo_li.appendChild(todo_tag_div);
   todoInput.value = '';
   todoTag.value = '';
 }
@@ -128,11 +132,12 @@ function insertMultipleToListOnDom(todos) {
 the value of the input and saves the old one so when the inner text
 of the button changes into "Save" rewrites it on the DOM, on the array
 and saves it to the local storage by checkingthe index */
-function editTodoInput(todoEdit, todoInput) {
+function editTodoInput(todoEdit, todoInput, todoTagInput) {
   if (todoEdit.innerText.toLowerCase() === 'edit') {
     const oldInputValue = todoInput.value;
     valueBeforeEditIndex = todos.indexOf(oldInputValue);
     todoInput.removeAttribute('disabled');
+    todoTagInput.removeAttribute('disabled');
     todoInput.focus();
     todoEdit.innerText = 'Save';
   } else {

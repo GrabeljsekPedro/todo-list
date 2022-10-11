@@ -46,8 +46,10 @@ function addTodo(todo,todotag) {
   }
   newTodos.push({
     content: todo,
-    tags: [todotag],
+    tags: todotag,
   });
+  console.log(newTodos[newTodos.length]);
+  newTodos[newTodos.length-1].tags = newTodos[newTodos.length-1].tags.split(' ');
   saveTodosToLocalStorage(newTodos);
   counterUpdate();
   insertToListOnDom(todo,todotag);
@@ -151,8 +153,10 @@ function editTodoInput(todoEdit, todoInput, todoTagInput) {
     todoEdit.innerText = 'Edit';
     newTodos[valueBeforeEditIndex] = {
       content: todoInput.value,
-      tags: [todoTagInput.value]
+      tags: todoTagInput.value
     };
+    newTodos[valueBeforeEditIndex].tags = newTodos[valueBeforeEditIndex].tags.split(' ');
+    console.log(newTodos);
     saveTodosToLocalStorage(newTodos);
   }
 }

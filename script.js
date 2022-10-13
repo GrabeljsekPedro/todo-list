@@ -4,6 +4,7 @@ const todoTag = document.querySelector('.todo-tag-input');
 const todoItemsList = document.querySelector('.todo-items');
 const counter = document.querySelector('.counter');
 const clearAllButton = document.querySelector('.clear-all');
+const todoTagSelect = document.querySelector('.tag-options');
 const todoStored = localStorage.getItem('todos')
 let newTodos = getTodosFromLocalStorage();
 let valueBeforeEditIndex;
@@ -12,11 +13,13 @@ let valueBeforeEditIndex;
 
 /* Listens to the refreshment of the page, inserts the objects from
 the local storage and updates the counter */
-addEventListener('DOMContentLoaded', (e) => {
+addEventListener('DOMContentLoaded', () => {
   if (newTodos) {
     insertMultipleToListOnDom(newTodos);
+    insertMultipleOptions();
     counterUpdate();
   } else {
+    insertMultipleOptions();
     counterUpdate();
   }
 });
@@ -48,9 +51,9 @@ function addTodo(todo,todotag) {
     content: todo,
     tags: todotag,
   });
-  console.log(newTodos[newTodos.length]);
   newTodos[newTodos.length-1].tags = newTodos[newTodos.length-1].tags.split(' ');
   saveTodosToLocalStorage(newTodos);
+  insertMultipleOptions();
   counterUpdate();
   insertToListOnDom(todo,todotag);
 }
@@ -129,7 +132,7 @@ function getTodosFromLocalStorage() {
 /* Runs the function insertToListOnDom for every element on the todo array */
 function insertMultipleToListOnDom(todos) {
   todos.forEach((todo) => {
-    insertToListOnDom(todo.content,todo.tags);
+    insertToListOnDom(todo.content,todo.tags.toString().replace(/,/g," "));
   })
 }
 
@@ -156,8 +159,8 @@ function editTodoInput(todoEdit, todoInput, todoTagInput) {
       tags: todoTagInput.value
     };
     newTodos[valueBeforeEditIndex].tags = newTodos[valueBeforeEditIndex].tags.split(' ');
-    console.log(newTodos);
     saveTodosToLocalStorage(newTodos);
+    insertMultipleOptions();
   }
 }
 
@@ -171,9 +174,9 @@ function deleteTodoInput(todoDelete,todoElement) {
   newTodos.splice(todoIndex,1);
   todoItemsList.removeChild(todoElement);
   saveTodosToLocalStorage(newTodos);
+  insertMultipleOptions();
   counterUpdate();
 }
-
 /* Updates the counter by checking the length of the array */
 function counterUpdate() {
   const counterNumber = newTodos.length;
@@ -187,4 +190,24 @@ function clearAll() {
   newTodos=[];
   saveTodosToLocalStorage(newTodos);
   counterUpdate();
+  insertMultipleOptions();
+}
+
+/* Creates an option that appends to todoTagSelect*/
+function insertOptions(tag) {
+  const todo_option = document.createElement('option');
+  todo_option.classList.add('option');
+  todo_option.innerHTML = tag;
+  todoTagSelect.appendChild(todo_option);
+}
+
+/* Runs the insertOptions function through two forEach so it checks the
+whole newTodos array at each index and the .tags array at each index */ 
+function insertMultipleOptions() {
+  todoTagSelect.innerHTML="";
+  newTodos.forEach((todo) => {
+    todo.tags.forEach((tag) => {
+      insertOptions(tag);
+    })
+  })
 }

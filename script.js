@@ -132,7 +132,7 @@ function getTodosFromLocalStorage() {
 /* Runs the function insertToListOnDom for every element on the todo array */
 function insertMultipleToListOnDom(todos) {
   todos.forEach((todo) => {
-    insertToListOnDom(todo.content,todo.tags);
+    insertToListOnDom(todo.content,todo.tags.toString().replace(/,/g," "));
   })
 }
 
@@ -159,7 +159,6 @@ function editTodoInput(todoEdit, todoInput, todoTagInput) {
       tags: todoTagInput.value
     };
     newTodos[valueBeforeEditIndex].tags = newTodos[valueBeforeEditIndex].tags.split(' ');
-    console.log(newTodos);
     saveTodosToLocalStorage(newTodos);
     insertMultipleOptions();
   }
@@ -178,7 +177,6 @@ function deleteTodoInput(todoDelete,todoElement) {
   insertMultipleOptions();
   counterUpdate();
 }
-
 /* Updates the counter by checking the length of the array */
 function counterUpdate() {
   const counterNumber = newTodos.length;

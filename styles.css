@@ -74,3 +74,26 @@
     padding: 10px;
     font-size: 1.1rem;
   }
+
+  .wrapper {
+    width: 300px;
+    border: 1px;
+    overflow: hidden;
+  }
+  .counter {
+    width: 200px;
+    float:left;
+    border: 1px;
+  }
+  .tags {
+    border: 1px;
+    overflow: hidden;
+  }
+  .clear-all {
+    border: 5px;
+    text-align: center;
+  }
+  .todos {
+    border: 5px;
+    text-align: center;
+  }

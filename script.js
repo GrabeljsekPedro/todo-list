@@ -37,6 +37,15 @@ clearAllButton.addEventListener('click', () => {
   clearAll();
 })
 
+todoTagSelect.addEventListener('change', () =>{
+  if (todoTagSelect.selectedIndex === 0) {
+    todoItemsList.innerHTML="";
+    insertMultipleToListOnDom(newTodos);
+  } else {
+    displayFilteredTags();
+  }
+})
+
 /* Functions*/
 
 /* addTodo checks that the input is not empty, pushes the input in
@@ -205,9 +214,27 @@ function insertOptions(tag) {
 whole newTodos array at each index and the .tags array at each index */ 
 function insertMultipleOptions() {
   todoTagSelect.innerHTML="";
+  const todo_option = document.createElement('option');
+  todo_option.classList.add('option');
+  todo_option.innerHTML = "-- Select a tag --";
+  todoTagSelect.appendChild(todo_option);
   newTodos.forEach((todo) => {
     todo.tags.forEach((tag) => {
       insertOptions(tag);
+    })
+  })
+}
+
+function displayFilteredTags() {
+  newTodos.forEach((todo) => {
+    todo.tags.forEach((tag) => {
+      if (todoTagSelect.options[todoTagSelect.selectedIndex].value === tag) {
+        todoItemsList.innerHTML="";
+        insertToListOnDom(todo.content,todo.tags.toString().replace(/,/g," "));
+      }
+      else {
+        return;
+      }
     })
   })
 }

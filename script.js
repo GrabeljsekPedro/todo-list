@@ -210,26 +210,32 @@ function insertOptions(tag) {
   todoTagSelect.appendChild(todo_option);
 }
 
-/* Runs the insertOptions function through two forEach so it checks the
-whole newTodos array at each index and the .tags array at each index */ 
+/* Creates a default tag option, creates an array that adds all the tags on the newTodos, 
+it removes the duplicate values and uses it to insert the values inside the select*/ 
 function insertMultipleOptions() {
   todoTagSelect.innerHTML="";
   const todo_option = document.createElement('option');
   todo_option.classList.add('option');
   todo_option.innerHTML = "-- Select a tag --";
   todoTagSelect.appendChild(todo_option);
+  let tagCheck = [];
   newTodos.forEach((todo) => {
     todo.tags.forEach((tag) => {
-      insertOptions(tag);
+      tagCheck.push(tag);
     })
   })
+  tagCheck = [...new Set(tagCheck)];
+  tagCheck.forEach((todo) => {
+    insertOptions(todo);
+  })
 }
-
+/* Erases the todo list on the DOM and inserts the selected filtered tag by running two "foreaches" 
+and checking if the selected tag is equal to one of the todo tags*/
 function displayFilteredTags() {
+  todoItemsList.innerHTML="";
   newTodos.forEach((todo) => {
     todo.tags.forEach((tag) => {
       if (todoTagSelect.options[todoTagSelect.selectedIndex].value === tag) {
-        todoItemsList.innerHTML="";
         insertToListOnDom(todo.content,todo.tags.toString().replace(/,/g," "));
       }
       else {

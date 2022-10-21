@@ -117,11 +117,22 @@ function insertToListOnDom(todo,todotag) {
     deleteTodoInput(todo_input_li,todo_li);
   })
 
+  /* Creates the "Details" button */
+  const todo_details_li = document.createElement('button');
+  todo_details_li.classList.add('detail');
+  todo_details_li.innerHTML = 'Details';
+
+  todo_details_li.addEventListener('click', () => {
+    localStorage.setItem('ToDoItemSelected', JSON.stringify([todo_input_li.value, todo_tag_li.value]));
+    window.open('./detailpage.html',"_self");
+  })
+
   /* Appends the input and the buttons to the list of the "To Dos", as well
   as emptying the input value */
   todo_li.appendChild(todo_input_li);
   todo_li.appendChild(todo_edit_li);
   todo_li.appendChild(todo_delete_li);
+  todo_li.appendChild(todo_details_li);
   todo_li.appendChild(todo_tag_div);
   todoInput.value = '';
   todoTag.value = '';

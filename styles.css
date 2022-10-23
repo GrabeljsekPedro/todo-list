@@ -76,8 +76,9 @@
   }
 
   .wrapper {
-    width: 300px;
+    width: 400px;
     border: 1px;
+    text-align: center;
     overflow: hidden;
   }
   .counter {

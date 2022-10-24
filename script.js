@@ -27,7 +27,7 @@ addEventListener('DOMContentLoaded', () => {
 /* Listens to the pressing of the "Add" button and runs 
 the addTodo function */
 todoForm.addEventListener('submit', function (e) {
- e.preventDefault();
+  e.preventDefault();
   addTodo(todoInput.value,todoTag.value);
 })
 
@@ -59,12 +59,16 @@ function addTodo(todo,todotag) {
   newTodos.push({
     content: todo,
     tags: todotag,
+    index: newTodos.length,
+    notes: "",
+    dueDate: "",
   });
   newTodos[newTodos.length-1].tags = newTodos[newTodos.length-1].tags.split(' ');
   saveTodosToLocalStorage(newTodos);
   insertMultipleOptions();
   counterUpdate();
-  insertToListOnDom(todo,todotag);
+  let id = newTodos.length-1;
+  insertToListOnDom(todo,todotag,id);
 }
 
 /* Saves the array to the local storage by converting it into a string */
@@ -74,8 +78,9 @@ function saveTodosToLocalStorage(todos) {
 
 /* This function inserts the inputs and buttons on the DOM,
 also it saves it to the local storage */
-function insertToListOnDom(todo,todotag) {
+function insertToListOnDom(todo,todotag,i) {
   const todo_li = document.createElement('li');
+  todo_li.setAttribute('id', i)
   todo_li.classList.add('item');
   todoItemsList.appendChild(todo_li);
 
@@ -117,11 +122,22 @@ function insertToListOnDom(todo,todotag) {
     deleteTodoInput(todo_input_li,todo_li);
   })
 
+  /* Creates the "Details" button */
+  const todo_details_li = document.createElement('button');
+  todo_details_li.classList.add('detail');
+  todo_details_li.innerHTML = 'Details';
+
+  todo_details_li.addEventListener('click', () => {
+    localStorage.setItem('ToDoItemSelected', JSON.stringify(newTodos[todo_li.getAttribute('id')]));
+    window.open('./detailpage.html',"_self");
+  })
+
   /* Appends the input and the buttons to the list of the "To Dos", as well
   as emptying the input value */
   todo_li.appendChild(todo_input_li);
   todo_li.appendChild(todo_edit_li);
   todo_li.appendChild(todo_delete_li);
+  todo_li.appendChild(todo_details_li);
   todo_li.appendChild(todo_tag_div);
   todoInput.value = '';
   todoTag.value = '';
@@ -140,8 +156,10 @@ function getTodosFromLocalStorage() {
 
 /* Runs the function insertToListOnDom for every element on the todo array */
 function insertMultipleToListOnDom(todos) {
+  let id = -1;
   todos.forEach((todo) => {
-    insertToListOnDom(todo.content,todo.tags.toString().replace(/,/g," "));
+    id += 1;
+    insertToListOnDom(todo.content,todo.tags.toString().replace(/,/g," "),id);
   })
 }
 
@@ -163,10 +181,8 @@ function editTodoInput(todoEdit, todoInput, todoTagInput) {
     todoInput.setAttribute('disabled', '');
     todoTagInput.setAttribute('disabled', '');
     todoEdit.innerText = 'Edit';
-    newTodos[valueBeforeEditIndex] = {
-      content: todoInput.value,
-      tags: todoTagInput.value
-    };
+    newTodos[valueBeforeEditIndex].content = todoInput.value;
+    newTodos[valueBeforeEditIndex].tags = todoTagInput.value
     newTodos[valueBeforeEditIndex].tags = newTodos[valueBeforeEditIndex].tags.split(' ');
     saveTodosToLocalStorage(newTodos);
     insertMultipleOptions();
@@ -181,6 +197,10 @@ function deleteTodoInput(todoDelete,todoElement) {
     return object.content === todoDelete.value;
   });
   newTodos.splice(todoIndex,1);
+  for (let i = todoIndex; i<newTodos.length; i++){
+    newTodos[i].index = i;
+    document.getElementById(i+1).setAttribute('id', i)
+  }
   todoItemsList.removeChild(todoElement);
   saveTodosToLocalStorage(newTodos);
   insertMultipleOptions();
@@ -221,7 +241,11 @@ function insertMultipleOptions() {
   let tagCheck = [];
   newTodos.forEach((todo) => {
     todo.tags.forEach((tag) => {
-      tagCheck.push(tag);
+      if (!tag){
+        return;
+      } else {
+        tagCheck.push(tag);
+      }
     })
   })
   tagCheck = [...new Set(tagCheck)];
